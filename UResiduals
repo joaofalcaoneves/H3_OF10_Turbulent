@@ -1,0 +1,11 @@
+set logscale y
+set title "Velocity Residuals"
+set ylabel 'Residual'
+set xlabel 'Iteration'
+
+plot "< cat interFoamLog | grep 'Solving for Ux' | cut -d' ' -f9 | tr -d ','" title 'Ux' with lines,\
+"< cat interFoamLog | grep 'Solving for Uy' | cut -d' ' -f9 | tr -d ','" title 'Uy' with lines,\
+"< cat interFoamLog | grep 'Solving for Uz' | cut -d' ' -f9 | tr -d ','" title 'Uz' with lines
+
+pause 1
+reread

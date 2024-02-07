@@ -1,0 +1,135 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "pointDisplacement.*"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-5;
+        relTol          0;
+    }
+    
+
+    "cellDisplacement.*"
+    {
+        solver          GAMG;
+        tolerance       1e-5;
+        relTol          0;
+        smoother        GaussSeidel;
+    };
+
+    "alpha.water.*"
+    {
+        nAlphaCorr      3;
+        nAlphaSubCycles 1;
+        alphaOuterCorrectors yes;
+        cAlpha          1;
+
+        MULESCorr	       	yes;
+        nLimiterIter    	10;
+	alphaApplyPrevCorr	yes;
+
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-10;
+        relTol          0;
+    };
+
+    "pcorr.*"
+    {
+        solver          GAMG;
+        smoother        DIC;
+
+        tolerance       1e-5;
+        relTol          0;
+    };
+
+    p_rgh
+    {
+   	solver GAMG;
+   	smoother DIC;
+ 	tolerance 1e-04;
+ 	relTol 0.01;
+ 	nPreSweeps 0;
+    	nPostSweeps 2;
+    	cacheAgglomeration on;
+    	agglomerator faceAreaPair;
+    	nCellsInCoarsestLevel 1000;
+    	mergeLevels 1;
+    };
+
+    p_rghFinal
+    {
+        solver GAMG;
+    	smoother DIC;
+    	tolerance 1e-06;
+    	relTol 0.0;
+    	nPreSweeps 0;
+    	nPostSweeps 2;
+    	cacheAgglomeration on;
+    	agglomerator faceAreaPair;
+    	nCellsInCoarsestLevel 1000;
+    	mergeLevels 1;
+    }
+
+    "(U|k|omega).*"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+
+        nSweeps         3;
+        tolerance       1e-5;
+        relTol          0;
+        minIter         5;
+    };
+}
+
+
+PIMPLE 
+{ 
+    momentumPredictor		yes;	// Indicates whether to solve for momentum, typical off in multiphase - Ask why to Guilherme!
+    consistent			true;	// Turns on/off SIMPLEC (add correction for missing term)
+    nOuterCorrectors		5; 	// Maximum number of outer correction loops (SIMPLE loops)
+    nCorrectors     		4;   	// Maximum number of inner (PISO) correction loops
+    nNonOrthogonalCorrectors 	1; 	// Number of non-orthogonal correction loops
+
+    correctPhi      		yes;  	// Perform flux correction functions to ensure continuity before solving momentum equation
+    moveMeshOuterCorrectors 	yes;  	// Indicates whether to perform dynamic mesh calculations in each outer loop
+    turbOnFinalIterOnly 	no;
+}
+
+relaxationFactors
+{
+	fields
+    {
+        p      	1; //0.1 se divergir
+        //pFinal  1;
+    }
+    equations
+    {
+	U			0.9; //0.25
+        k			0.9; //0.25
+        omega     		0.9; //0.25
+    }
+}
+
+cache
+{
+    grad(U);
+}
+// ************************************************************************* //

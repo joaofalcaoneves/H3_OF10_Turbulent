@@ -1,0 +1,10 @@
+set logscale y
+set title "k-omega Residuals"
+set ylabel 'Residual'
+set xlabel 'Iteration'
+
+plot "< cat interFoamLog | grep 'Solving for omega' | cut -d' ' -f9 | tr -d ','" title 'omega' with lines,\
+"< cat interFoamLog | grep 'Solving for k' | cut -d' ' -f9 | tr -d ','" title 'k' with lines
+
+pause 60
+reread
