@@ -32,7 +32,7 @@ motionAmp = 0.5
 wprime = 0.3
 w = np.sqrt(wprime*9.81/draft)
 truncMax = 75
-truncMin = 0.1
+truncMin = 0.2
 
 min_truncate_index = np.argmax(time >= truncMin)
 max_truncate_index = np.argmax(time >= truncMax)
